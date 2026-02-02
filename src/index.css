@@ -1,0 +1,138 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  
+  font-style: normal;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+
+/* custom metric cards styling (for dot patterns and subtle gradients) */
+
+/* Each .metric-card gets a soft gradient and subtle border via Tailwind utilities plus custom pattern */
+.metric-card {
+  /* ensure proper stacking context for pseudo backgrounds */
+  position: relative;
+}
+
+/* dotted pattern container inside card */
+.metric-card .dot-group {
+  position: absolute;
+  right: -10%;
+  bottom: -10%;
+  width: 70%;
+  height: 70%;
+  pointer-events: none;
+  opacity: 0.18;
+  background-image:
+    radial-gradient(currentColor 1px, transparent 1px);
+  background-size: 12px 12px;
+  transform: rotate(0deg);
+  border-radius: 1rem;
+}
+
+/* variants */
+.metric-card--yellow {
+  color: #7a3e00; /* text fallback */
+  background: linear-gradient(180deg, #fff7e6 0%, #fff4d9 60%);
+  border: 1px solid rgba(250, 204, 21, 0.08);
+}
+.metric-card--yellow .dot-group {
+  color: #f5d09a; /* dots color */
+}
+
+/* pink variant */
+.metric-card--pink {
+  color: #6b021b;
+  background: linear-gradient(180deg, #fff1f0 0%, #ffecee 60%);
+  border: 1px solid rgba(249, 168, 212, 0.06);
+}
+.metric-card--pink .dot-group {
+  color: #f8c9c4;
+}
+
+/* small responsive adjustments */
+@media (max-width: 640px) {
+  .metric-card { padding: 1rem; }
+  .metric-card .sparkline { height: 28px; width: 70px; }
+}
+@media (min-width: 640px) {
+  .metric-card .sparkline { height: 40px; width: 120px; }
+}
+
+/* sparkline styling (svg polyline already has stroke) - make it non-selectable */
+.metric-card svg.sparkline { display: block; }
+
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #000 !important;
+  transition: background-color 10000s ease-in-out 0s;
+  box-shadow: inset 0 0 0px 1000px white !important;
+}
+
