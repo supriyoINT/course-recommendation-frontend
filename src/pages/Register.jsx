@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { BASE_URL } from "../env";
+import { useNavigate } from "react-router-dom";
+
 
 /* JSON DATA */
 const DATA = {
@@ -71,12 +73,13 @@ export default function UserProfileForm() {
     timeline: ""
   });
 
+
   const [interestArea, setInterestArea] = useState([]);
   const [platforms, setPlatforms] = useState([]);
   const [skills, setSkills] = useState(DATA.current_skills);
 
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate();
   const handleSelect = (field, value) => setForm((s) => ({ ...s, [field]: value }));
 
   const toggleInterest = (item) =>
@@ -90,30 +93,22 @@ export default function UserProfileForm() {
     );
 
   const submitForm = async (e) => {
+    const user_id = JSON.parse(localStorage.getItem("user"))?.userId;
+    if(!user_id){
+        alert("User not logged in");
+        return;
+    }
     e.preventDefault();
     setLoading(true);
     const formData = {
             ...form,
             interest_area: interestArea,
             preferred_platforms: platforms,
-            current_skills: skills
+            current_skills: skills,
+            user_id: user_id
           }
-    await createUserProfile(formData)
-    // setTimeout(() => {
-    //   setLoading(false);
-    //   alert(
-    //     JSON.stringify(
-    //       {
-    //         ...form,
-    //         interest_area: interestArea,
-    //         preferred_platforms: platforms,
-    //         current_skills: skills
-    //       },
-    //       null,
-    //       2
-    //     )
-    //   );
-    // }, 800);
+    await createUserProfile(formData);
+    navigate("/dashboard")
   };
 
   const createUserProfile = async (data)=>{
@@ -121,6 +116,7 @@ export default function UserProfileForm() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "ngrok-skip-browser-warning": "true"
             },
             body: JSON.stringify(data),
       });
@@ -130,6 +126,8 @@ export default function UserProfileForm() {
     if (!response.ok) {
         throw new Error(result.message || "Login failed");
     }
+
+
   }
 
   return (
@@ -152,7 +150,7 @@ export default function UserProfileForm() {
                 />
               </InputWrapper>
 
-              <InputWrapper label="Goal">
+              {/* <InputWrapper label="Goal">
                 <input
                   type="text"
                   placeholder="Your career or hobby goal"
@@ -160,7 +158,7 @@ export default function UserProfileForm() {
                   onChange={(e) => handleSelect("goal", e.target.value)}
                   className="w-full rounded-lg border border-neutral-200 bg-white px-4 py-3"
                 />
-              </InputWrapper>
+              </InputWrapper> */}
 
               <InputWrapper label="Experience Level">
                 <StyledSelect
@@ -170,7 +168,7 @@ export default function UserProfileForm() {
                 />
               </InputWrapper>
 
-              <InputWrapper label="Background">
+              {/* <InputWrapper label="Background">
                 <input
                   type="text"
                   placeholder="Your education or domain"
@@ -178,7 +176,7 @@ export default function UserProfileForm() {
                   onChange={(e) => handleSelect("background", e.target.value)}
                   className="w-full rounded-lg border border-neutral-200 bg-white px-4 py-3"
                 />
-              </InputWrapper>
+              </InputWrapper> */}
             </div>
 
             {/* COLUMN 2 */}
@@ -191,40 +189,40 @@ export default function UserProfileForm() {
                 />
               </InputWrapper>
 
-              <InputWrapper label="Preferred Learning Style">
+              {/* <InputWrapper label="Preferred Learning Style">
                 <StyledSelect
                   value={form.preferred_learning_style}
                   onChange={(v) => handleSelect("preferred_learning_style", v)}
                   options={DATA.preferred_learning_style}
                 />
-              </InputWrapper>
+              </InputWrapper> */}
 
-              <InputWrapper label="Budget">
+              {/* <InputWrapper label="Budget">
                 <StyledSelect
                   value={form.budget}
                   onChange={(v) => handleSelect("budget", v)}
                   options={DATA.budget}
                 />
-              </InputWrapper>
+              </InputWrapper> */}
 
-              <InputWrapper label="Timeline">
+              {/* <InputWrapper label="Timeline">
                 <StyledSelect
                   value={form.timeline}
                   onChange={(v) => handleSelect("timeline", v)}
                   options={DATA.timeline}
                 />
-              </InputWrapper>
+              </InputWrapper> */}
             </div>
 
             {/* COLUMN 3 */}
             <div>
-              <InputWrapper label="Weekly Time Available">
+              {/* <InputWrapper label="Weekly Time Available">
                 <StyledSelect
                   value={form.time_available_per_week}
                   onChange={(v) => handleSelect("time_available_per_week", v)}
                   options={DATA.time_available_per_week}
                 />
-              </InputWrapper>
+              </InputWrapper> */}
 
               {/* INTEREST TAG SELECTOR */}
               <InputWrapper label="Interest Area (multi-select)">
@@ -241,7 +239,7 @@ export default function UserProfileForm() {
               </InputWrapper>
 
               {/* PLATFORM TAG SELECTOR */}
-              <InputWrapper label="Preferred Learning Platforms (multi-select)">
+              {/* <InputWrapper label="Preferred Learning Platforms (multi-select)">
                 <div className="flex flex-wrap gap-2">
                   {DATA.preferred_platforms.map((item) => (
                     <TagPill
@@ -252,7 +250,7 @@ export default function UserProfileForm() {
                     />
                   ))}
                 </div>
-              </InputWrapper>
+              </InputWrapper> */}
             </div>
           </form>
 

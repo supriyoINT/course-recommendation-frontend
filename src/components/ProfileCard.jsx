@@ -20,7 +20,8 @@ export default function ProfileCard() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch(`${BASE_URL}users/profile/2`,{
+        const userDetails = localStorage.getItem("user");
+        const response = await fetch(`${BASE_URL}users/profile/${JSON.parse(userDetails)?.userId}`,{
           method: "GET",
           headers: {
             "Content-Type": "application/json",

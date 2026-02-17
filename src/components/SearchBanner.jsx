@@ -68,7 +68,8 @@ export default function SearchBanner() {
     // In a real application, this function would fetch data from an API
     // based on the user's search query and return the results.
     // Here, we are using FAKE_RESULTS for demonstration purposes.
-    const response = await fetch(`${BASE_URL}user-recommendation/1`,{
+    const userDetails = localStorage.getItem("user");
+    const response = await fetch(`${BASE_URL}user-recommendation/${JSON.parse(userDetails)?.userId}`,{
       method: "GET",
       headers: {
         "Content-Type": "application/json",

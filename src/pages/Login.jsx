@@ -39,19 +39,15 @@ export default function LoginPage() {
         }
         setLoading(true);
         const result = await login({email:email})
-        if(!result)
-            alert("User does not exist")
-        else{
+        console.log("Login result:", result);
+        if(result){
             localStorage.setItem("user",JSON.stringify(result))
-            const profileDetails = await getUserProfile(result.userId)
-            
+            const profileDetails = await getUserProfile(result.userId)           
             if(!profileDetails.success){
                 navigate("/register");
             }else{
-
                 navigate("/dashboard");
             }
-
         }
     }
     
