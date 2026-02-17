@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { BASE_URL } from "../env";
 
 export default function GoalLearningPath() {
   const [goalInput, setGoalInput] = useState("");
@@ -25,7 +26,13 @@ export default function GoalLearningPath() {
     const userDetails = localStorage.getItem("user");
     console.log("User Details:", userDetails);
     const userDetailsObj = JSON.parse(userDetails);
-    const response = await fetch(`http://127.0.0.1:5000/user-goals/${userDetailsObj.userId}`);
+    const response = await fetch(`${BASE_URL}user-goals/${userDetailsObj.userId}`,{
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true"
+      }
+    });
     const data = await response.json();
     setGoals(data.data);
   }
@@ -34,10 +41,11 @@ export default function GoalLearningPath() {
     const userDetails = localStorage.getItem("user");
     console.log("User Details:", userDetails);
     const userDetailsObj = JSON.parse(userDetails);
-    const response = await fetch(`http://127.0.0.1:5000/user-goals`, {
+    const response = await fetch(`${BASE_URL}user-goals`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true"
       },
       body: JSON.stringify({
         goal: goalTitle,
@@ -61,7 +69,13 @@ export default function GoalLearningPath() {
   }, [goals.length]);
 
   const fetchLearningPathForGoal = async (goalId) => {
-    const response = await fetch(`http://127.0.0.1:5000/user-goals-steps/${goalId}`);
+    const response = await fetch(`${BASE_URL}user-goals-steps/${goalId}`,{
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true"
+      }
+    });
     const data = await response.json();
     return data;
   };
@@ -70,7 +84,7 @@ export default function GoalLearningPath() {
   const loadStepsForGoal = async (goal) => {
     console.log("Loading steps for goal:", goal);
     if(!goal?.learning_path){
-        const stepdRes = await fetchLearningPathForGoal(goal.id);
+        const stepdRes = await fetchLearningPathForGoal(goal.goal_id);
         console.log("Fetched learning path:", stepdRes);
         if(!stepdRes || stepdRes.status !== 'success' || !stepdRes.data || stepdRes.data.length === 0){
             alert("No learning path found for this goal.");
@@ -111,10 +125,11 @@ export default function GoalLearningPath() {
     setQuizCompleted(false);
     
     try {
-      const response = await fetch(`http://127.0.0.1:5000/generate-mcq`,{
+      const response = await fetch(`${BASE_URL}generate-mcq`,{
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true"
         },
         body: JSON.stringify({
           topic: skill
@@ -240,10 +255,11 @@ export default function GoalLearningPath() {
     console.log("Fetching courses for skill:", step.skill);
     const recommendePayload = { topic: step.skill, skill_level: step.level || "beginner" };
     try {
-      const response = await fetch(`http://127.0.0.1:5000/recommended_course_based_on_skill`, {
+      const response = await fetch(`${BASE_URL}recommended_course_based_on_skill`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true"
         },
         body: JSON.stringify(recommendePayload)
       });
@@ -268,10 +284,11 @@ export default function GoalLearningPath() {
     let payload = { topic: step.skill, skill_level: step.level || "beginner"};
     console.log("Course recommendation payload:", payload);
     try {
-         const res =await fetch(`http://localhost:5000/recommended_course_based_on_skill`, {
+         const res =await fetch(`${BASE_URL}recommended_course_based_on_skill`, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true"
         },
         body: JSON.stringify(payload)
         })

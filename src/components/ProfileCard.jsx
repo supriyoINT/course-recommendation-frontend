@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { BASE_URL } from "../env";
 
 /* Example user data from JSON */
 const USER_DATA = {
@@ -19,7 +20,13 @@ export default function ProfileCard() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/users/profile/2");
+        const response = await fetch(`${BASE_URL}users/profile/2`,{
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true"
+          }
+        });
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }

@@ -44,6 +44,7 @@ export default function LoginPage() {
         else{
             localStorage.setItem("user",JSON.stringify(result))
             const profileDetails = await getUserProfile(result.userId)
+            
             if(!profileDetails.success){
                 navigate("/register");
             }else{
@@ -60,6 +61,7 @@ export default function LoginPage() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "ngrok-skip-browser-warning": "true"
                 },
                 body: JSON.stringify(data),
             });
@@ -79,8 +81,10 @@ export default function LoginPage() {
 
     async function getUserProfile(userId) {
         try {
+            console.log("Fetching user profile for userId:", `${BASE_URL}users/profile/${userId}`);
             const response = await fetch(`${BASE_URL}users/profile/${userId}`, {
                 method: "GET",
+                headers: {"ngrok-skip-browser-warning": "true"},
             });
 
             const result = await response.json();

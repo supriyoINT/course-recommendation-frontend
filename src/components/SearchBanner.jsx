@@ -1,6 +1,7 @@
 // src/components/SearchBanner.jsx
 import React, { useState } from "react";
 import SearchResultsDemo from "./SearchResult"; // make sure this path matches your project
+import { BASE_URL } from "../env";
 
 // small skeleton row used during loading
 function SkeletonRow() {
@@ -67,7 +68,13 @@ export default function SearchBanner() {
     // In a real application, this function would fetch data from an API
     // based on the user's search query and return the results.
     // Here, we are using FAKE_RESULTS for demonstration purposes.
-    const response = await fetch(`http://127.0.0.1:5000/user-recommendation/1`);
+    const response = await fetch(`${BASE_URL}user-recommendation/1`,{
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true"
+      }
+    });
     const data = await response.json();
     console.log("Fetched recommended courses:", data);
     return data;
