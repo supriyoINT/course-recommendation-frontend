@@ -5,6 +5,7 @@ import DashboardLayout from "./pages/DashboardLayout";
 import DashboardHome from "./pages/DashboardHome";
 import QuizPage from "./pages/QuizPage";
 import LoginPage from "./pages/Login";
+import SignupPage from "./pages/Signup";
 import RegisterPage from "./pages/Register";
 import SearchResults from "./components/SearchResult";
 import CourseList from "./pages/CourseList";
@@ -14,7 +15,8 @@ export default function App() {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/" element={<LoginPage />} />
+      <Route path="/" element={<SignupPage />} />
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
       {/* Dashboard Layout (Protected Part of App) */}
@@ -24,7 +26,7 @@ export default function App() {
         <Route path="quiz" element={<QuizPage />} />
         {/* add more nested routes here using relative paths */}
         <Route path="courses" element={<CourseList />} />
-        <Route path="/dashboard/goal" element={<Goal />} />
+        <Route path="goal" element={<Goal />} />
       </Route>
 
       {/* Root-level search route (keeps it outside dashboard) */}

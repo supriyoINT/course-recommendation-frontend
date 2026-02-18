@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../env";
 
 /* Example user data from JSON */
@@ -43,123 +43,112 @@ export default function ProfileCard() {
   }, []);
 
   const handleLogout = () => {
-    // clear token or session here if needed
+    localStorage.removeItem("user");
+    localStorage.removeItem("signupData");
     navigate("/login", { replace: true });
   };
 
   return (
-    <div
-      className="
-      bg-white shadow-lg rounded-xl p-6 w-full max-w-sm mx-auto 
-      animate-[fadeSlide_0.5s_ease]
-    "
-    >
-      {/* Animation Keyframes */}
-      <style>{`
-        @keyframes fadeSlide {
-          from { opacity: 0; transform: translateY(12px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+    <div className="bg-white rounded-3xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300">
+      {/* Profile Header */}
+      <div className="flex flex-col items-center text-center mb-6">
+        <div className="relative">
+          <img
+            src={`https://ui-avatars.com/api/?name=${userProfile?.fullName || USER_DATA.fullName}&background=0D8ABC&color=fff&size=120`}
+            alt="Profile"
+            className="w-24 h-24 rounded-full object-cover border-4 border-blue-100 shadow-lg"
+          />
+          <div className="absolute bottom-0 right-0 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+        </div>
 
-      {/* Profile Section */}
-      <div className="flex flex-col items-center text-center">
-        <img
-          src="/assets/image/m.jpg"
-          alt="Profile"
-          className="w-24 h-24 rounded-full object-cover border shadow"
-        />
-
-        <h2 className="mt-4 text-lg font-semibold text-gray-800">
-          {userProfile ? userProfile.fullName : USER_DATA.fullName}
+        <h2 className="mt-4 text-2xl font-bold text-gray-900">
+          {userProfile?.fullName || USER_DATA.fullName}
         </h2>
 
-        <p className="text-sm text-gray-500 capitalize">
-          {userProfile
-            ? `${userProfile.user_type} • ${userProfile.experience_level}`
-            : `${USER_DATA.user_type} • ${USER_DATA.experience_level}`}
-        </p>
-
-        {/* Goal */}
-        <p className="mt-2 text-xs text-gray-600 italic w-11/12">
-          "{userProfile ? userProfile.goal : USER_DATA.goal}"
-        </p>
-
-        {/* Interest Areas */}
-        <div className="mt-4 w-full">
-          <h3 className="text-sm font-semibold text-gray-700">Interest Areas:</h3>
-          <div className="flex flex-wrap gap-2 mt-3 justify-center">
-            {(userProfile ? userProfile.interest_area : USER_DATA.interest_area)?.map(
-              (item) => (
-                <span
-                  key={item}
-                  className="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full"
-                >
-                  {item}
-                </span>
-              )
-            )}
-          </div>
+        <div className="flex items-center gap-2 mt-2 justify-center flex-wrap">
+          <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full capitalize">
+            {userProfile?.user_type || USER_DATA.user_type}
+          </span>
+          <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full capitalize">
+            {userProfile?.experience_level || USER_DATA.experience_level}
+          </span>
         </div>
+      </div>
 
-        {/* Skills */}
-        <div className="mt-4 w-full">
-          <h3 className="text-sm font-semibold text-gray-700">Skills:</h3>
-          <div className="flex flex-wrap gap-2 mt-3 justify-center">
-            {(userProfile ? userProfile.current_skills : USER_DATA.current_skills)?.map(
-              (skill) => (
-                <span
-                  key={skill}
-                  className="px-3 py-1 bg-blue-100 text-blue-600 text-xs rounded-full"
-                >
-                  {skill}
-                </span>
-              )
-            )}
-          </div>
+      <hr className="my-6 border-gray-200" />
+
+      {/* Interest Areas */}
+      <div className="mb-6">
+        <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+          <span className="text-lg">🎯</span> Interests
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {(userProfile?.interest_area || USER_DATA.interest_area)?.slice(0, 3).map(
+            (item) => (
+              <span
+                key={item}
+                className="px-3 py-2 bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 text-xs font-semibold rounded-full"
+              >
+                {item}
+              </span>
+            )
+          )}
         </div>
+      </div>
 
-        {/* Preferred Platforms */}
-        <div className="mt-4 w-full">
-          <h3 className="text-sm font-semibold text-gray-700">Learning Platforms:</h3>
-          <div className="flex flex-wrap gap-2 mt-3 justify-center">
-            {(userProfile ? userProfile.preferred_platforms : USER_DATA.preferred_platforms)?.map(
-              (p) => (
-                <span
-                  key={p}
-                  className="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full"
-                >
-                  {p}
-                </span>
-              )
-            )}
-          </div>
+      {/* Skills */}
+      <div className="mb-6">
+        <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+          <span className="text-lg">⭐</span> Skills
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {(userProfile?.current_skills || USER_DATA.current_skills)?.slice(0, 3).map(
+            (skill) => (
+              <span
+                key={skill}
+                className="px-3 py-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 text-xs font-semibold rounded-full"
+              >
+                {skill}
+              </span>
+            )
+          )}
         </div>
+      </div>
 
-        {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="
-            mt-8 w-full bg-red-500 text-white py-2 
-            rounded-lg hover:bg-red-600 active:scale-[0.97] 
-            transition font-medium
-          "
-        >
-          Logout
-        </button>
+      {/* Platforms */}
+      <div className="mb-6">
+        <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+          <span className="text-lg">📚</span> Platforms
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {(userProfile?.preferred_platforms || USER_DATA.preferred_platforms)?.slice(0, 2).map(
+            (p) => (
+              <span
+                key={p}
+                className="px-3 py-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 text-xs font-semibold rounded-full"
+              >
+                {p}
+              </span>
+            )
+          )}
+        </div>
+      </div>
 
-        {/* Link to Register Page */}
-        <p className="text-sm mt-4 text-gray-600">
-          Want to{" "}
-          <Link
-            to="/register"
-            className="text-blue-600 font-semibold underline underline-offset-2"
-          >
-            update
-          </Link>{" "}
-          Profile ?
+      {/* Goal */}
+      <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl border border-purple-200">
+        <h3 className="text-xs font-bold text-gray-900 mb-2 uppercase tracking-wide">Your Goal</h3>
+        <p className="text-sm text-gray-700 italic">
+          "{userProfile?.goal || USER_DATA.goal}"
         </p>
       </div>
+
+      {/* Logout Button */}
+      <button
+        onClick={handleLogout}
+        className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold text-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95"
+      >
+        🚪 Logout
+      </button>
     </div>
   );
 }

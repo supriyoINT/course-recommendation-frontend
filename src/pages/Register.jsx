@@ -1,279 +1,300 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { BASE_URL } from "../env";
 import { useNavigate } from "react-router-dom";
 
-
 /* JSON DATA */
 const DATA = {
-  user_type: ["Student", "Professonal",  "Job Seeker", "Career Switcher"],
+  user_type: ["Student", "Professional", "Job Seeker", "Career Switcher"],
   experience_level: ["Beginner", "Intermediate", "Advanced"],
-  learning_purpose: ["Job", "Skill Upgrade", "Collage Support", "Hobby", "Certification", "Interest Exploration"],
-  preferred_learning_style: ["Project Based", "Theory", "Short Courses", "Long Programs"],
-  interest_area: ["Backend Development", "DevOps", "Finance", "Photography", "Music", "Marketing"],
-  preferred_platforms: ["Udemy", "Coursera", "FreeCodeCamp", "LinkedIn Learning"],
-  budget: ["Free", "Low Cost", "Premium"],
-  time_available_per_week: ["5 hours", "Weekends", "Full Time"],
-  timeline: ["1 month", "3 months", "Flexible"],
-
-  current_skills: ["Python", "Excel", "Communication", "Drawing"]
+  learning_purpose: ["Job", "Skill Upgrade", "College Support", "Hobby", "Certification", "Interest Exploration"],
+  interest_area: ["Backend Development", "DevOps", "Finance", "Photography", "Music", "Marketing", "Frontend", "Data Science"],
 };
-
-/* INPUT STYLE (matches Sign In UI) */
-const InputWrapper = ({ label, children }) => (
-  <label className="block mb-3">
-    <div className="text-sm text-neutral-700 mb-1">{label}</div>
-    {children}
-  </label>
-);
-
-/* SELECT BOX STYLE */
-const StyledSelect = ({ value, onChange, options }) => (
-  <select
-    value={value}
-    onChange={(e) => onChange(e.target.value)}
-    className="
-      w-full rounded-lg border border-neutral-200 bg-white px-4 py-3
-      text-neutral-900 placeholder-neutral-400
-      focus:bg-white focus:text-black focus:ring-2 focus:ring-neutral-300
-    "
-  >
-    <option value="">Select</option>
-    {options.map((o) => (
-      <option key={o} value={o}>{o}</option>
-    ))}
-  </select>
-);
-
-/* TAG (PILL) SELECTOR */
-const TagPill = ({ label, selected, toggle }) => (
-  <button
-    type="button"
-    onClick={() => toggle(label)}
-    className={`
-      px-3 py-1 rounded-full border text-sm transition
-      ${selected ? "bg-black text-white border-black" : "bg-white text-neutral-700 border-neutral-300"}
-    `}
-  >
-    {label}
-  </button>
-);
 
 /* MAIN COMPONENT */
 export default function UserProfileForm() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 4;
+
   const [form, setForm] = useState({
     user_type: "",
-    goal: "",
     experience_level: "",
-    background: "",
     learning_purpose: "",
-    preferred_learning_style: "",
-    budget: "",
-    time_available_per_week: "",
-    timeline: ""
+    interest_area: []
   });
-
-
-  const [interestArea, setInterestArea] = useState([]);
-  const [platforms, setPlatforms] = useState([]);
-  const [skills, setSkills] = useState(DATA.current_skills);
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleSelect = (field, value) => setForm((s) => ({ ...s, [field]: value }));
 
   const toggleInterest = (item) =>
-    setInterestArea((prev) =>
-      prev.includes(item) ? prev.filter((x) => x !== item) : [...prev, item]
-    );
+    setForm((prev) => ({
+      ...prev,
+      interest_area: prev.interest_area.includes(item)
+        ? prev.interest_area.filter((x) => x !== item)
+        : [...prev.interest_area, item]
+    }));
 
-  const togglePlatform = (item) =>
-    setPlatforms((prev) =>
-      prev.includes(item) ? prev.filter((x) => x !== item) : [...prev, item]
-    );
-
-  const submitForm = async (e) => {
-    const user_id = JSON.parse(localStorage.getItem("user"))?.userId;
-    if(!user_id){
-        alert("User not logged in");
-        return;
+  const canProceed = () => {
+    switch (currentStep) {
+      case 1:
+        return form.user_type !== "";
+      case 2:
+        return form.experience_level !== "";
+      case 3:
+        return form.learning_purpose !== "";
+      case 4:
+        return form.interest_area.length > 0;
+      default:
+        return false;
     }
-    e.preventDefault();
-    setLoading(true);
-    const formData = {
-            ...form,
-            interest_area: interestArea,
-            preferred_platforms: platforms,
-            current_skills: skills,
-            user_id: user_id
-          }
-    await createUserProfile(formData);
-    navigate("/dashboard")
   };
 
-  const createUserProfile = async (data)=>{
-    const response = await fetch(`${BASE_URL}users/profile`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "ngrok-skip-browser-warning": "true"
-            },
-            body: JSON.stringify(data),
-      });
+  const handleNext = () => {
+    if (canProceed() && currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
 
-    const result = await response.json();
+  const submitForm = async (e) => {
+    if (e) e.preventDefault();
 
-    if (!response.ok) {
-        throw new Error(result.message || "Login failed");
+    const user_id = JSON.parse(localStorage.getItem("user"))?.userId;
+    if (!user_id) {
+      alert("User not logged in");
+      return;
     }
 
+    if (!canProceed()) {
+      alert("Please complete all fields");
+      return;
+    }
 
-  }
+    setLoading(true);
+    const formData = {
+      user_type: form.user_type,
+      experience_level: form.experience_level,
+      learning_purpose: form.learning_purpose,
+      interest_area: form.interest_area,
+      user_id: user_id
+    };
+
+    try {
+      const response = await fetch(`${BASE_URL}users/profile`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Profile creation failed");
+      }
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error saving profile. Please try again.");
+      setLoading(false);
+    }
+  };
+
 
   return (
-    <div className="min-h-screen bg-neutral-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-5xl">
-        <div className="bg-white rounded-2xl shadow-lg p-8 animate-[fadeIn_0.6s_ease]">
-          <h2 className="text-2xl font-semibold text-neutral-900 text-center mb-6">
-            Complete Your Profile
-          </h2>
-
-          <form onSubmit={submitForm} className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-            {/* COLUMN 1 */}
-            <div>
-              <InputWrapper label="User Type">
-                <StyledSelect
-                  value={form.user_type}
-                  onChange={(v) => handleSelect("user_type", v)}
-                  options={DATA.user_type}
-                />
-              </InputWrapper>
-
-              {/* <InputWrapper label="Goal">
-                <input
-                  type="text"
-                  placeholder="Your career or hobby goal"
-                  value={form.goal}
-                  onChange={(e) => handleSelect("goal", e.target.value)}
-                  className="w-full rounded-lg border border-neutral-200 bg-white px-4 py-3"
-                />
-              </InputWrapper> */}
-
-              <InputWrapper label="Experience Level">
-                <StyledSelect
-                  value={form.experience_level}
-                  onChange={(v) => handleSelect("experience_level", v)}
-                  options={DATA.experience_level}
-                />
-              </InputWrapper>
-
-              {/* <InputWrapper label="Background">
-                <input
-                  type="text"
-                  placeholder="Your education or domain"
-                  value={form.background}
-                  onChange={(e) => handleSelect("background", e.target.value)}
-                  className="w-full rounded-lg border border-neutral-200 bg-white px-4 py-3"
-                />
-              </InputWrapper> */}
-            </div>
-
-            {/* COLUMN 2 */}
-            <div>
-              <InputWrapper label="Learning Purpose">
-                <StyledSelect
-                  value={form.learning_purpose}
-                  onChange={(v) => handleSelect("learning_purpose", v)}
-                  options={DATA.learning_purpose}
-                />
-              </InputWrapper>
-
-              {/* <InputWrapper label="Preferred Learning Style">
-                <StyledSelect
-                  value={form.preferred_learning_style}
-                  onChange={(v) => handleSelect("preferred_learning_style", v)}
-                  options={DATA.preferred_learning_style}
-                />
-              </InputWrapper> */}
-
-              {/* <InputWrapper label="Budget">
-                <StyledSelect
-                  value={form.budget}
-                  onChange={(v) => handleSelect("budget", v)}
-                  options={DATA.budget}
-                />
-              </InputWrapper> */}
-
-              {/* <InputWrapper label="Timeline">
-                <StyledSelect
-                  value={form.timeline}
-                  onChange={(v) => handleSelect("timeline", v)}
-                  options={DATA.timeline}
-                />
-              </InputWrapper> */}
-            </div>
-
-            {/* COLUMN 3 */}
-            <div>
-              {/* <InputWrapper label="Weekly Time Available">
-                <StyledSelect
-                  value={form.time_available_per_week}
-                  onChange={(v) => handleSelect("time_available_per_week", v)}
-                  options={DATA.time_available_per_week}
-                />
-              </InputWrapper> */}
-
-              {/* INTEREST TAG SELECTOR */}
-              <InputWrapper label="Interest Area (multi-select)">
-                <div className="flex flex-wrap gap-2">
-                  {DATA.interest_area.map((item) => (
-                    <TagPill
-                      key={item}
-                      label={item}
-                      selected={interestArea.includes(item)}
-                      toggle={toggleInterest}
-                    />
-                  ))}
-                </div>
-              </InputWrapper>
-
-              {/* PLATFORM TAG SELECTOR */}
-              {/* <InputWrapper label="Preferred Learning Platforms (multi-select)">
-                <div className="flex flex-wrap gap-2">
-                  {DATA.preferred_platforms.map((item) => (
-                    <TagPill
-                      key={item}
-                      label={item}
-                      selected={platforms.includes(item)}
-                      toggle={togglePlatform}
-                    />
-                  ))}
-                </div>
-              </InputWrapper> */}
-            </div>
-          </form>
-
-          {/* SUBMIT BUTTON */}
-          <div className="text-center mt-8">
-            <button
-              onClick={submitForm}
-              disabled={loading}
-              className="
-                px-6 py-3 rounded-xl bg-black text-white
-                hover:bg-neutral-900 active:scale-95 transition shadow
-                disabled:bg-neutral-700
-              "
-            >
-              {loading ? "Saving..." : "Save Profile"}
-            </button>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-6">
+      <div className="w-full max-w-2xl">
+        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100">
+          {/* Header */}
+          <div className="text-center mb-10">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+              Complete Your Profile
+            </h1>
+            <p className="text-gray-600 text-lg">Set up your preferences in 4 simple steps</p>
           </div>
 
-          <p className="text-center mt-4 text-sm text-neutral-600">
-            <Link to="/" className="text-black underline">Back to Sign In</Link>
-          </p>
+          {/* Progress Bar */}
+          <div className="mb-10">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm font-semibold text-gray-700">Step {currentStep} of {totalSteps}</span>
+              <span className="text-sm font-semibold text-gray-500">{Math.round((currentStep / totalSteps) * 100)}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+              <div
+                className="bg-gradient-to-r from-blue-500 to-purple-500 h-full transition-all duration-500"
+                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Step Content */}
+          <div className="mb-10 min-h-[300px]">
+            {/* STEP 1: User Type */}
+            {currentStep === 1 && (
+              <div className="animate-fadeIn">
+                <div className="mb-8">
+                  <label className="block mb-2">
+                    <span className="text-2xl font-bold text-gray-900 mb-1">What's your user type?</span>
+                    <p className="text-gray-600 text-base mt-2">Select the option that best describes you</p>
+                  </label>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {DATA.user_type.map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => handleSelect("user_type", type)}
+                      className={`p-5 rounded-2xl border-3 transition-all duration-300 font-semibold text-lg text-center ${
+                        form.user_type === type
+                          ? "bg-gradient-to-r from-blue-500 to-purple-500 border-blue-500 text-white shadow-lg scale-105"
+                          : "bg-white border-gray-300 text-gray-900 hover:border-blue-400 hover:shadow-md"
+                      }`}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 2: Experience Level */}
+            {currentStep === 2 && (
+              <div className="animate-fadeIn">
+                <div className="mb-8">
+                  <label className="block mb-2">
+                    <span className="text-2xl font-bold text-gray-900 mb-1">What's your experience level?</span>
+                    <p className="text-gray-600 text-base mt-2">Select your current skill level</p>
+                  </label>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {DATA.experience_level.map((level) => (
+                    <button
+                      key={level}
+                      onClick={() => handleSelect("experience_level", level)}
+                      className={`p-6 rounded-2xl border-3 transition-all duration-300 font-semibold text-lg text-center ${
+                        form.experience_level === level
+                          ? "bg-gradient-to-r from-blue-500 to-purple-500 border-blue-500 text-white shadow-lg scale-105"
+                          : "bg-white border-gray-300 text-gray-900 hover:border-blue-400 hover:shadow-md"
+                      }`}
+                    >
+                      {level}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 3: Learning Purpose */}
+            {currentStep === 3 && (
+              <div className="animate-fadeIn">
+                <div className="mb-8">
+                  <label className="block mb-2">
+                    <span className="text-2xl font-bold text-gray-900 mb-1">What's your learning purpose?</span>
+                    <p className="text-gray-600 text-base mt-2">Tell us why you want to learn</p>
+                  </label>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {DATA.learning_purpose.map((purpose) => (
+                    <button
+                      key={purpose}
+                      onClick={() => handleSelect("learning_purpose", purpose)}
+                      className={`p-5 rounded-2xl border-3 transition-all duration-300 font-semibold text-lg text-center ${
+                        form.learning_purpose === purpose
+                          ? "bg-gradient-to-r from-blue-500 to-purple-500 border-blue-500 text-white shadow-lg scale-105"
+                          : "bg-white border-gray-300 text-gray-900 hover:border-blue-400 hover:shadow-md"
+                      }`}
+                    >
+                      {purpose}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 4: Interest Area */}
+            {currentStep === 4 && (
+              <div className="animate-fadeIn">
+                <div className="mb-8">
+                  <label className="block mb-2">
+                    <span className="text-2xl font-bold text-gray-900 mb-1">What are your interests?</span>
+                    <p className="text-gray-600 text-base mt-2">Select one or more areas you're interested in</p>
+                  </label>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {DATA.interest_area.map((interest) => (
+                    <button
+                      key={interest}
+                      onClick={() => toggleInterest(interest)}
+                      className={`p-5 rounded-2xl border-3 transition-all duration-300 font-semibold text-lg text-center ${
+                        form.interest_area.includes(interest)
+                          ? "bg-gradient-to-r from-green-500 to-emerald-500 border-green-500 text-white shadow-lg scale-105"
+                          : "bg-white border-gray-300 text-gray-900 hover:border-green-400 hover:shadow-md"
+                      }`}
+                    >
+                      {interest}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4">
+            {currentStep < totalSteps && (
+              <button
+                onClick={handleNext}
+                disabled={!canProceed()}
+                className={`flex-1 py-4 px-6 rounded-2xl font-bold text-lg transition-all duration-300 ${
+                  canProceed()
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg hover:scale-105"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                Next Step →
+              </button>
+            )}
+
+            {currentStep === totalSteps && (
+              <button
+                onClick={submitForm}
+                disabled={!canProceed() || loading}
+                className={`flex-1 py-4 px-6 rounded-2xl font-bold text-lg transition-all duration-300 ${
+                  loading
+                    ? "bg-gray-400 text-white cursor-not-allowed"
+                    : "bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:shadow-lg hover:scale-105"
+                }`}
+              >
+                {loading ? "Completing Setup..." : "✓ Complete Profile"}
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Footer Info */}
+        <p className="text-center mt-8 text-gray-600 text-sm">
+          Your profile helps us recommend the best courses for you
+        </p>
       </div>
+
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-in-out;
+        }
+      `}</style>
     </div>
   );
 }

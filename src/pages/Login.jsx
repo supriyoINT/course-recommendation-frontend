@@ -42,12 +42,7 @@ export default function LoginPage() {
         console.log("Login result:", result);
         if(result){
             localStorage.setItem("user",JSON.stringify(result))
-            const profileDetails = await getUserProfile(result.userId)           
-            if(!profileDetails.success){
-                navigate("/register");
-            }else{
-                navigate("/dashboard");
-            }
+            navigate("/dashboard");
         }
     }
     
@@ -96,85 +91,119 @@ export default function LoginPage() {
 
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 via-white to-gray-50 p-6">
-            <div className="max-w-md w-full">
-                <div className="bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl p-8 transform transition duration-500 hover:-translate-y-1">
-                    <div className="flex items-center gap-4 mb-6">
-                        <div>
-                            <h1 className="text-2xl font-semibold text-gray-900">Welcome</h1>
-                            <p className="text-sm text-gray-500">Sign in to continue to Course Recommendation</p>
-                        </div>
-                    </div>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-6 relative overflow-hidden">
+            {/* Decorative circles */}
+            <div className="absolute top-10 left-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+            <div className="absolute bottom-10 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: "2s" }}></div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <label className="block">
-                            <span className="text-sm text-neutral-900">Email</span>
+            <div className="max-w-md w-full relative z-10">
+                {/* Logo/Header */}
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-3xl mb-4 shadow-lg">
+                        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C6.5 6.253 3 9.756 3 14s3.5 7.747 9 7.747m0-13c5.5 0 9-3.503 9-7.747m0 0V5m0 9.247c5.5 0 9 3.503 9 7.747" />
+                        </svg>
+                    </div>
+                    <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                        Welcome Back
+                    </h1>
+                    <p className="text-gray-600 text-lg">Sign in to your learning journey</p>
+                </div>
+
+                {/* Card */}
+                <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Email Input */}
+                        <div>
+                            <label className="block mb-2">
+                                <span className="text-sm font-semibold text-gray-700">Email Address</span>
+                            </label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="mt-1 block w-full
-    rounded-lg border border-neutral-300
-    bg-white
-    px-4 py-2
-    text-neutral-900
-    placeholder-neutral-400
-    hover:text-black
-    focus:text-black focus:bg-white
-    active:text-black active:bg-neutral-800
-    autofill:text-black
-    transition"
+                                className="w-full rounded-2xl border-2 border-gray-200 bg-white px-4 py-3
+                                text-gray-900 placeholder-gray-400
+                                focus:border-blue-500 focus:bg-blue-50 focus:ring-0
+                                transition-all duration-300
+                                disabled:opacity-50 disabled:cursor-not-allowed"
                                 placeholder="you@example.com"
                                 autoComplete="email"
                                 disabled={loading}
                             />
-                        </label>
+                        </div>
 
-                        <label className="block">
-                            <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-600">Password</span>
-                                <Link to="/register" className="text-sm text-rose-500 hover:underline">Register new user</Link>
-                            </div>
+                        {/* Password Input */}
+                        <div>
+                            <label className="block mb-2">
+                                <span className="text-sm font-semibold text-gray-700">Password</span>
+                            </label>
                             <input
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="
-    mt-1 block w-full
-    rounded-lg border border-neutral-300
-    bg-white
-    px-4 py-2
-    text-neutral-900
-    placeholder-neutral-400
-    hover:text-black
-    focus:text-black focus:bg-white
-    active:text-black active:bg-neutral-800
-    autofill:text-black
-    transition
-  "
+                                className="w-full rounded-2xl border-2 border-gray-200 bg-white px-4 py-3
+                                text-gray-900 placeholder-gray-400
+                                focus:border-blue-500 focus:bg-blue-50 focus:ring-0
+                                transition-all duration-300
+                                disabled:opacity-50 disabled:cursor-not-allowed"
                                 placeholder="Enter your password"
                                 autoComplete="current-password"
                                 disabled={loading}
                             />
-                        </label>
+                        </div>
 
-                        {error && <div className="text-sm text-rose-600">{error}</div>}
+                        {/* Error Message */}
+                        {error && (
+                            <div className="p-4 bg-red-50 border-2 border-red-200 rounded-2xl">
+                                <p className="text-sm text-red-700 font-semibold flex items-center gap-2">
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                    </svg>
+                                    {error}
+                                </p>
+                            </div>
+                        )}
 
+                        {/* Sign In Button */}
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-full flex items-center justify-center gap-3 px-4 py-2 rounded-xl text-white font-medium transition transform
-                ${loading ? "bg-rose-600/90 cursor-wait" : "bg-rose-500 hover:bg-rose-600 active:scale-95 shadow-md"}`}
+                            className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform ${
+                                loading
+                                    ? "bg-gray-400 text-white cursor-wait"
+                                    : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg hover:scale-105 active:scale-95"
+                            }`}
                         >
                             {loading ? <Spinner /> : null}
                             <span>{loading ? "Signing in..." : "Sign In"}</span>
                         </button>
                     </form>
+
+                    {/* Divider */}
+                    <div className="flex items-center gap-4 my-6">
+                        <div className="flex-1 h-px bg-gray-200"></div>
+                        <span className="text-sm text-gray-500">New here?</span>
+                        <div className="flex-1 h-px bg-gray-200"></div>
+                    </div>
+
+                    {/* Sign Up Link */}
+                    <Link
+                        to="/"
+                        className="w-full flex items-center justify-center py-4 px-6 rounded-2xl border-2 border-blue-500 text-blue-600 font-bold text-lg hover:bg-blue-50 transition-all duration-300 transform hover:scale-105"
+                    >
+                        📝 Create an Account
+                    </Link>
                 </div>
 
-                {/* subtle footer */}
-                <div className="mt-6 text-center text-xs text-gray-400">
-                    Created by <span className="text-gray-600">Team RND-21</span>
+                {/* Footer */}
+                <div className="mt-8 text-center">
+                    <p className="text-sm text-gray-600">
+                        Join thousands of learners advancing their skills
+                    </p>
+                    <div className="mt-4 text-xs text-gray-400">
+                        Made with ❤️ by <span className="text-gray-600 font-semibold">Team RND-21</span>
+                    </div>
                 </div>
             </div>
         </div>

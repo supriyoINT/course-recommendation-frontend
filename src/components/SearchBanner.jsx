@@ -84,13 +84,13 @@ export default function SearchBanner() {
   return (
     <>
       {/* Card */}
-      <div className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-3xl shadow-lg p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 text-white border border-blue-300">
         {/* Left: icon + text */}
         <div className="flex items-center gap-4 min-w-0">
-          <div className="w-14 h-14 rounded-2xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
+          <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-lg flex items-center justify-center flex-shrink-0 border border-white/30">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6 text-yellow-600"
+              className="w-8 h-8 text-white"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -102,9 +102,9 @@ export default function SearchBanner() {
           </div>
 
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-gray-900 truncate">Find Courses Faster</h2>
-            <p className="text-sm text-gray-500 mt-1 truncate">
-              Your AI-powered dashboard for smart course recommendations
+            <h2 className="text-2xl font-bold text-white truncate">🔍 Discover Courses</h2>
+            <p className="text-sm text-blue-100 mt-1 truncate">
+              Get AI-powered personalized recommendations
             </p>
           </div>
         </div>
@@ -114,24 +114,12 @@ export default function SearchBanner() {
           <button
             type="button"
             aria-expanded={open}
-            onClick={handleSubmit}
-            // onClick={() => setOpen((s) => !s)}
-            className="w-full sm:w-auto px-6 py-2 rounded-lg bg-yellow-700 text-white hover:bg-yellow-800 transition flex items-center justify-between gap-2"
+            onClick={() => setOpen((s) => !s)}
+            className="w-full sm:w-auto px-8 py-3 rounded-2xl bg-white text-blue-600 hover:bg-blue-50 transition-all font-bold text-lg flex items-center justify-center gap-2 shadow-lg transform hover:scale-105 active:scale-95"
           >
-            {/* Search */}
-            {/* <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className={`w-4 h-4 transform transition-transform ${open ? "rotate-90" : "rotate-0"}`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg> */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-4 h-4"
+              className="w-5 h-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -139,6 +127,7 @@ export default function SearchBanner() {
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
+            Explore
           </button>
         </div>
       </div>
@@ -146,25 +135,25 @@ export default function SearchBanner() {
       {/* Slide-down search area */}
       <form
         onSubmit={handleSubmit}
-        className={`w-full bg-white border border-gray-200 rounded-xl mt-2 px-4 transition-all duration-300 overflow-hidden mx-0
-          ${open ? "max-h-40 py-4 opacity-100" : "max-h-0 py-0 opacity-0"}
+        className={`w-full bg-white rounded-2xl border-2 border-gray-200 mt-3 px-6 py-4 transition-all duration-300 overflow-hidden shadow-lg
+          ${open ? "max-h-40 opacity-100" : "max-h-0 opacity-0 hidden"}
         `}
         aria-hidden={!open}
       >
-        <div className="relative max-w-4xl mx-auto">
+        <div className="relative">
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             type="text"
-            placeholder="Search courses..."
-            className="w-full border border-transparent text-yellow-800 bg-yellow-100 rounded-xl px-4 pr-16 py-3 outline-none placeholder-yellow-700"
+            placeholder="Search for courses..."
+            className="w-full border-2 border-gray-300 text-gray-900 bg-white rounded-xl px-4 pr-16 py-3 outline-none placeholder-gray-500 focus:border-blue-500 focus:bg-blue-50 transition-all"
           />
 
           {/* Arrow button inside input (right side) */}
           <button
             type="submit"
             aria-label="Run search"
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg px-3 py-2 flex items-center justify-center"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg text-white rounded-lg px-4 py-2 flex items-center justify-center transition-all"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -181,9 +170,9 @@ export default function SearchBanner() {
       </form>
 
       {/* Results area (hidden initially) */}
-      <div className={`max-w-4xl mx-auto mt-4 transition-all`}>
+      <div className={`w-full mt-6 transition-all`}>
         {!showResults ? null : (
-          <div className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
+          <div className="bg-white rounded-3xl border-2 border-gray-200 p-6 shadow-xl">
             {loadingResults ? (
               // skeleton loading
               <div>
@@ -192,7 +181,10 @@ export default function SearchBanner() {
                 <SkeletonRow />
               </div>
             ) : results.length === 0 ? (
-              <div className="py-12 text-center text-neutral-600">No results found for <strong className="text-neutral-800">{q || "all"}</strong></div>
+              <div className="py-16 text-center">
+                <p className="text-lg text-gray-600">No courses found for <strong className="text-gray-900">{q || "all"}</strong></p>
+                <p className="text-sm text-gray-500 mt-2">Try a different search term</p>
+              </div>
             ) : (
               // render the existing SearchResultsDemo component with filtered results
               <SearchResultsDemo results={results} />
