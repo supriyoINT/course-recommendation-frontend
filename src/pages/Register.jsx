@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { BASE_URL } from "../env";
 import { useNavigate } from "react-router-dom";
 
@@ -13,9 +13,10 @@ const DATA = {
 /* MAIN COMPONENT */
 export default function UserProfileForm() {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   const [form, setForm] = useState({
+    name: "",
     user_type: "",
     experience_level: "",
     learning_purpose: "",
@@ -38,12 +39,14 @@ export default function UserProfileForm() {
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return form.user_type !== "";
+        return form.name.trim() !== "";
       case 2:
-        return form.experience_level !== "";
+        return form.user_type !== "";
       case 3:
-        return form.learning_purpose !== "";
+        return form.experience_level !== "";
       case 4:
+        return form.learning_purpose !== "";
+      case 5:
         return form.interest_area.length > 0;
       default:
         return false;
@@ -72,6 +75,7 @@ export default function UserProfileForm() {
 
     setLoading(true);
     const formData = {
+      name: form.name,
       user_type: form.user_type,
       experience_level: form.experience_level,
       learning_purpose: form.learning_purpose,
@@ -132,8 +136,27 @@ export default function UserProfileForm() {
 
           {/* Step Content */}
           <div className="mb-10 min-h-[300px]">
-            {/* STEP 1: User Type */}
+            {/* STEP 1: Name */}
             {currentStep === 1 && (
+              <div className="animate-fadeIn">
+                <div className="mb-8">
+                  <span className="text-2xl font-bold text-gray-900 mb-1">What's your name?</span>
+                  <p className="text-gray-600 text-base mt-2">Let us know what to call you</p>
+                </div>
+                <input
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
+                  placeholder="Enter your full name"
+                  className="w-full rounded-2xl border-2 border-gray-200 bg-white px-5 py-4 text-gray-900 text-lg placeholder-gray-400 focus:border-blue-500 focus:bg-blue-50 focus:outline-none transition-all duration-300"
+                  onKeyDown={(e) => { if (e.key === "Enter" && canProceed()) setCurrentStep(2); }}
+                  autoFocus
+                />
+              </div>
+            )}
+
+            {/* STEP 2: User Type */}
+            {currentStep === 2 && (
               <div className="animate-fadeIn">
                 <div className="mb-8">
                   <label className="block mb-2">
@@ -159,8 +182,8 @@ export default function UserProfileForm() {
               </div>
             )}
 
-            {/* STEP 2: Experience Level */}
-            {currentStep === 2 && (
+            {/* STEP 3: Experience Level */}
+            {currentStep === 3 && (
               <div className="animate-fadeIn">
                 <div className="mb-8">
                   <label className="block mb-2">
@@ -186,8 +209,8 @@ export default function UserProfileForm() {
               </div>
             )}
 
-            {/* STEP 3: Learning Purpose */}
-            {currentStep === 3 && (
+            {/* STEP 4: Learning Purpose */}
+            {currentStep === 4 && (
               <div className="animate-fadeIn">
                 <div className="mb-8">
                   <label className="block mb-2">
@@ -213,8 +236,8 @@ export default function UserProfileForm() {
               </div>
             )}
 
-            {/* STEP 4: Interest Area */}
-            {currentStep === 4 && (
+            {/* STEP 5: Interest Area */}
+            {currentStep === 5 && (
               <div className="animate-fadeIn">
                 <div className="mb-8">
                   <label className="block mb-2">
@@ -257,7 +280,7 @@ export default function UserProfileForm() {
               </button>
             )}
 
-            {currentStep === totalSteps && (
+            {currentStep === 5 && (
               <button
                 onClick={submitForm}
                 disabled={!canProceed() || loading}
