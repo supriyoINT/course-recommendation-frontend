@@ -38,11 +38,21 @@ export default function LoginPage() {
             return;
         }
         setLoading(true);
-        const result = await login({email:email})
-        console.log("Login result:", result);
-        if(result){
-            localStorage.setItem("user",JSON.stringify(result))
-            navigate("/dashboard");
+        try {
+            const result = await login({email:email})
+            console.log("Login result:", result);
+            if(result){
+                localStorage.setItem("user",JSON.stringify(result))
+                if(result.isNewUser){
+                    navigate("/register");
+                } else {
+                    navigate("/dashboard");
+                }
+            }
+        } catch (err) {
+            setError(err.message || "Login failed. Please try again.");
+        } finally {
+            setLoading(false);
         }
     }
     

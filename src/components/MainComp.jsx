@@ -1,6 +1,5 @@
 
-import React, { useState } from "react";
-import MetricCards from "./MatricCard";  
+import React from "react";
 import ProfileCard from "./ProfileCard";
 import SearchBanner from "./SearchBanner";
 
@@ -13,12 +12,6 @@ export default function MainComp() {
           {/* Search Section */}
           <section className="bg-white rounded-3xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300">
             <SearchBanner/>
-          </section>
-
-          {/* Metrics Section */}
-          <section className="bg-white rounded-3xl shadow-lg p-8 border border-gray-100">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Your Progress</h2>
-            <MetricCards/>
           </section>
         </div>
 
