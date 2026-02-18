@@ -24,7 +24,7 @@ export default function App() {
         <Route path="quiz" element={<QuizPage />} />
         {/* add more nested routes here using relative paths */}
         <Route path="courses" element={<CourseList />} />
-        <Route path="/dashboard/goal" element={<Goal />} />
+        <Route path="goal" element={<Goal />} />
       </Route>
 
       {/* Root-level search route (keeps it outside dashboard) */}

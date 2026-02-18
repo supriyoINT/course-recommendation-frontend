@@ -11,7 +11,7 @@ export default function DashboardLayout() {
 
   const nav = [
     { to: "/dashboard", label: "Dashboard", icon: DashboardIcon, end: true },
-    { to: "/goal", label: "Goal", icon: GoalIcon, end: true },
+    { to: "/dashboard/goal", label: "Goal", icon: GoalIcon, end: true },
     // { to: "quiz", label: "Quiz", icon: QuizIcon },
   ];
 
