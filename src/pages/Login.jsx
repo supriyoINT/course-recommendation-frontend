@@ -191,19 +191,19 @@ export default function LoginPage() {
                     </form>
 
                     {/* Divider */}
-                    <div className="flex items-center gap-4 my-6">
+                    {/* <div className="flex items-center gap-4 my-6">
                         <div className="flex-1 h-px bg-gray-200"></div>
                         <span className="text-sm text-gray-500">New here?</span>
                         <div className="flex-1 h-px bg-gray-200"></div>
-                    </div>
+                    </div> */}
 
                     {/* Sign Up Link */}
-                    <Link
+                    {/* <Link
                         to="/"
                         className="w-full flex items-center justify-center py-4 px-6 rounded-2xl border-2 border-blue-500 text-blue-600 font-bold text-lg hover:bg-blue-50 transition-all duration-300 transform hover:scale-105"
                     >
                         📝 Create an Account
-                    </Link>
+                    </Link> */}
                 </div>
 
                 {/* Footer */}

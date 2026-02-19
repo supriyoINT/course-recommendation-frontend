@@ -383,7 +383,7 @@ export default function GoalLearningPath() {
                       {(expandedGoals ? [...goals].reverse() : [...goals].reverse().slice(0, 3)).map((goal) => (
                         <li
                           key={goal.id}
-                          onClick={() => loadStepsForGoal(goal)}
+                          onClick={() => loadStepsForGoal(goal.id)}
                           className={`cursor-pointer rounded-xl px-4 py-3 border-2 transition-all duration-300 ${
                             selectedGoal?.id === goal.id 
                               ? "bg-gradient-to-r from-blue-50 to-purple-50 border-blue-500 shadow-md" 
